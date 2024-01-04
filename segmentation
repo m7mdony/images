@@ -1,0 +1,44 @@
+from PIL import Image
+from ultralytics import YOLO
+import cv2
+import os
+import numpy as np
+# Load a pretrained YOLOv8n model
+model = YOLO('yolov8n.pt')
+
+# Run inference on 'bus.jpg'
+results = model('train/images/82.jpg', device='CPU')  # results list
+
+image=cv2.imread("train/images/82.jpg")
+height, width, _ = image.shape  # Get the image dimensions
+
+
+
+# Create a folder to save masks
+mask_folder = 'masks'
+os.makedirs(mask_folder, exist_ok=True)
+
+for r in results:
+    boxes=r.boxes.xywhn.tolist()
+    print(boxes)
+    for annotation in boxes:
+        x, y, w, h = annotation
+        xmin = int(x * width - w * width / 2)
+        ymin = int(y * height - h * height / 2)
+        xmax = int(x * width + w * width / 2)
+        ymax = int(y * height + h * height / 2)
+            
+          # Crop the region from the original image
+        cropped_region = image[ymin:ymax, xmin:xmax, :]
+
+        # Save the cropped image
+        crop_filename = os.path.join(mask_folder, f'crop_{x}_{y}.png')
+        cv2.imwrite(crop_filename, cropped_region)
+
+        # Draw rectangle on the original image
+        cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)
+
+cv2.imshow("Annotated Image", image)
+key = cv2.waitKey(0)
+if key == ord("q"):
+    cv2.destroyAllWindows()

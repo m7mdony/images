@@ -22,15 +22,15 @@ def check(images_path, labels_path):
             for line in file:
                 annotations.append(list(map(float, line.strip().split())))
         
-        # Draw rectangles for each annotation
-        for annotation in annotations:
-            x, y, w, h = annotation[1:]
-            xmin = int(x * width - w * width / 2)
-            ymin = int(y * height - h * height / 2)
-            xmax = int(x * width + w * width / 2)
-            ymax = int(y * height + h * height / 2)
-            
-            cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)
+            # Draw rectangles for each annotation
+            for annotation in annotations:
+                x, y, w, h = annotation[1:]
+                xmin = int(x * width - w * width / 2)
+                ymin = int(y * height - h * height / 2)
+                xmax = int(x * width + w * width / 2)
+                ymax = int(y * height + h * height / 2)
+                
+                cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)
 
         # Show the image with rectangles
         cv2.imshow("Annotated Image", image)
